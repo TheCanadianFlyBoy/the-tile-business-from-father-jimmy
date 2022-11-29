@@ -1,0 +1,6 @@
+﻿  Pathfinder.cpp
+C:\Users\arms0426\Desktop\the-tile-business-from-father-jimmy\Pathfinding_TestBed\Source\Pathfinder.cpp(42,32): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\arms0426\Desktop\the-tile-business-from-father-jimmy\Pathfinding_TestBed\Source\Pathfinder.cpp(42,49): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\arms0426\Desktop\the-tile-business-from-father-jimmy\Pathfinding_TestBed\Source\Pathfinder.cpp(104,44): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\arms0426\Desktop\the-tile-business-from-father-jimmy\Pathfinding_TestBed\Source\Pathfinder.cpp(104,70): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+  Pathfinder.vcxproj -> C:\Users\arms0426\Desktop\the-tile-business-from-father-jimmy\Pathfinding_TestBed\build\bin\x64\Debug\Pathfinder.exe
