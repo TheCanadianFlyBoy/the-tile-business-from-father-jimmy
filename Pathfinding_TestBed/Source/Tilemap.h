@@ -13,6 +13,8 @@ public:
     void Draw();
 
     bool IsTileWalkableAtTilePos(int x, int y);
+    int GetTileWalkableAtTilePos(int x, int y);
+
     static int GetIndex(int x, int y);
 
     int GetWidth() { return 10; }

@@ -59,6 +59,14 @@ bool Tilemap::IsTileWalkableAtTilePos(int x, int y)
     return m_Tiles[y*10 + x] == 0 ? true : false;
 }
 
+int Tilemap::GetTileWalkableAtTilePos(int x, int y)
+{
+    if (x < 0 || x >= 10 || y < 0 || y >= 10)
+        return -1;
+
+    return m_Tiles[y * 10 + x] == 0 ? Tilemap::GetIndex(x, y) : -1;
+}
+
 int Tilemap::GetIndex(int x, int y)
 {
     return y * 10 + x;

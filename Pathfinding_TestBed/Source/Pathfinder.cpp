@@ -26,12 +26,13 @@ bool Pathfinder::FindPath(int sx, int sy, int ex, int ey)
     }
 
     //Reset all nodes
-    for (PathNode &_node : m_Nodes)
+    for (int i = 0; i < m_Nodes.size(); i++)
     {
+        PathNode& _node = m_Nodes[i];
         _node.cost = FLT_MAX;
         _node.heuristic = FLT_MAX;
         _node.finalCost = FLT_MAX;
-        _node.parentNodeIndex = -1;
+        _node.parentNodeIndex = i;
         _node.status = PathNodeStatus::Unchecked;
     }
 
@@ -53,24 +54,25 @@ bool Pathfinder::FindPath(int sx, int sy, int ex, int ey)
     {
         //Get open node
         int OpenNodeIndex = 0;
+        int DeletionIndex = 0;
         //Iterate to find lowest F score
         for (int i = 0; i < OpenIndicies.size(); i++)
         {
             //Get current node
             PathNode& current_node = m_Nodes[OpenIndicies[i]];
             PathNode& open_node = m_Nodes[OpenNodeIndex];
-            if (OpenNodeIndex == -1 || current_node.finalCost < open_node.finalCost)
+            if (current_node.finalCost <= open_node.finalCost)
             {
                 //Set current node to open node
                 OpenNodeIndex = OpenIndicies[i];
-                OpenIndicies.erase(OpenIndicies.begin() + i);
-                break;
+                DeletionIndex = i;
             }
         }
-
+        //Delete        
+        OpenIndicies.erase(OpenIndicies.begin() + DeletionIndex);
 
         //If end point, return true!
-        if (m_Nodes[OpenNodeIndex].parentNodeIndex == Tilemap::GetIndex(ex, ey))
+        if (OpenNodeIndex == Tilemap::GetIndex(ex, ey))
         {
             return true;
         }
@@ -79,18 +81,21 @@ bool Pathfinder::FindPath(int sx, int sy, int ex, int ey)
         m_Nodes[OpenNodeIndex].status = PathNodeStatus::Closed;
 
         //Add neighbours
-        int node_x = OpenNodeIndex % 10;
-        int node_y = OpenNodeIndex / 10;
-        int neighbours[4] = { OpenNodeIndex + 1, OpenNodeIndex - 1, OpenNodeIndex + 10, OpenNodeIndex - 10 };
+        int node_x = OpenNodeIndex % m_pTilemap->GetWidth();
+        int node_y = OpenNodeIndex / m_pTilemap->GetWidth();
+        int neighbours[4] = {   m_pTilemap->GetTileWalkableAtTilePos(node_x + 1, node_y),
+                                m_pTilemap->GetTileWalkableAtTilePos(node_x - 1, node_y),
+                                m_pTilemap->GetTileWalkableAtTilePos(node_x, node_y + 1),
+                                m_pTilemap->GetTileWalkableAtTilePos(node_x, node_y - 1) };
         //Loop neighbours
         for (int i = 0; i < 4; i++)
         {
-            //Get coords
-            int neighbour_x = neighbours[i] % 10;
-            int neighbour_y = neighbours[i] / 10;
             //Is valid
-            if (m_pTilemap->IsTileWalkableAtTilePos(neighbour_x, neighbour_y))
+            if (neighbours[i] != -1 && m_Nodes[neighbours[i]].status != PathNodeStatus::Closed)
             {
+                //Get coords
+                int neighbour_x = neighbours[i] % m_pTilemap->GetWidth();
+                int neighbour_y = neighbours[i] / m_pTilemap->GetWidth();
                 //Check if in list already
                 bool add = true;
                 for (int j = 0; j < OpenIndicies.size(); j++)
@@ -117,7 +122,23 @@ bool Pathfinder::FindPath(int sx, int sy, int ex, int ey)
 
 std::vector<int> Pathfinder::GetPath(int ex, int ey)
 {
+    //Create vector of indicies
     std::vector<int> path;
+
+    //Get end node index and add to path
+    int current_node_index = ex + ey * m_pTilemap->GetWidth();
+    path.push_back(current_node_index);
+    //Iterate the parents
+    while (m_Nodes[current_node_index].parentNodeIndex != current_node_index)
+    {
+        PathNode& current_node = m_Nodes[current_node_index];
+        int parnt = current_node.parentNodeIndex;
+        //Add to path
+        path.push_back(parnt);
+        //Rejazzle the shmazzle
+        current_node_index = parnt;
+    }
+
 
     return path;
 }
